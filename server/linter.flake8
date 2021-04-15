@@ -1,0 +1,3 @@
+[flake8]
+exclude = .git,__pycache__,nginx
+ignore = F401, H306

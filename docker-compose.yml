@@ -1,0 +1,27 @@
+version: '3'
+services:
+    server:
+        build:
+            context: ./
+            dockerfile: ./server/Dockerfile
+            args:
+                - secret_KEY
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - ./server:/server:Z
+        ports:
+            - 8000:8000
+        depends_on:
+            - db
+        environment:
+            DEBUG: 'True'
+            DATABASE_URL: 'postgres://postgres:@db:5432/postgres'
+            BROKER_URL: 'amqp://user:password@rabbitmq:5672/my_vhost'
+            secret_KEY: ${secret_KEY}
+    db:
+        image: postgres:11
+        environment:
+            POSTGRES_DB: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_HOST_AUTH_METHOD: trust
+
