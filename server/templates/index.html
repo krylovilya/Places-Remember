@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block js %}
+<script>
+
+let myMap;
+
+ymaps.ready(init);
+
+function init () {
+    myMap = new ymaps.Map('map', {
+        center: [56.01527253, 92.8969574],
+        zoom: 12
+    }, {
+        searchControlProvider: 'yandex#search'
+    });
+}
+
+</script>
+{% endblock %}
+
+{% block css %}
+<style>
+    #map {
+    height: 1000px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+
+{% endblock %}
