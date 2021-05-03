@@ -6,6 +6,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'social_django',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 LOCAL_APPS = [

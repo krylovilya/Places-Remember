@@ -7,6 +7,10 @@ services:
             args:
                 - secret_KEY
                 - YANDEX_API_KEY
+                - SOCIAL_AUTH_VK_OAUTH2_KEY
+                - SOCIAL_AUTH_VK_OAUTH2_SECRET
+                - SOCIAL_AUTH_FACEBOOK_KEY
+                - SOCIAL_AUTH_FACEBOOK_SECRET
         command: python manage.py runserver 0.0.0.0:8000
         volumes:
             - ./server:/server:Z
@@ -18,8 +22,6 @@ services:
             DEBUG: 'True'
             DATABASE_URL: 'postgres://postgres:@db:5432/postgres'
             BROKER_URL: 'amqp://user:password@rabbitmq:5672/my_vhost'
-            secret_KEY: ${secret_KEY}
-            YANDEX_API_KEY: ${YANDEX_API_KEY}
     db:
         image: postgres:11
         environment:

@@ -1,34 +1,45 @@
 {% extends "base.html" %}
 
 {% block js %}
-<script>
+    <script>
 
-let myMap;
+        let myMap;
 
-ymaps.ready(init);
+        ymaps.ready(init);
 
-function init () {
-    myMap = new ymaps.Map('map', {
-        center: [56.01527253, 92.8969574],
-        zoom: 12
-    }, {
-        searchControlProvider: 'yandex#search'
-    });
-}
+        function init() {
+            myMap = new ymaps.Map('map', {
+                center: [56.01527253, 92.8969574],
+                zoom: 12
+            }, {
+                searchControlProvider: 'yandex#search'
+            });
+        }
 
-</script>
+    </script>
 {% endblock %}
 
 {% block css %}
-<style>
-    #map {
-    height: 1000px;
-    }
-</style>
+    <style>
+        #map {
+            height: 1000px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 
 
 
+{% endblock %}
+
+{% block end_js %}
+    {% if user.is_authenticated %}
+        <script>
+            var toastHTML = '<img src="{{ user_avatar }}" alt="" class="circle responsive-img">' +
+                '<span class="white-text" style="margin-left: 10px">Welcome, {{ user_name }}</span>';
+            M.toast({html: toastHTML});
+
+        </script>
+    {% endif %}
 {% endblock %}
