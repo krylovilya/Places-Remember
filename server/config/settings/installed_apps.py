@@ -12,6 +12,7 @@ INSTALLED_APPS = [
 
 LOCAL_APPS = [
     'apps.PlacesRemember',
+    'apps.place',
 ]
 
 INSTALLED_APPS += LOCAL_APPS
