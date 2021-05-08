@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', include('apps.PlacesRemember.urls')),
+    path('place/', include('apps.place.urls')),
     path('admin/', admin.site.urls),
     path('', include('social_django.urls')),
     path('logout/', auth_views.LogoutView.as_view(), name='logout')

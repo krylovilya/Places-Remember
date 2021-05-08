@@ -1,45 +1,18 @@
 {% extends "base.html" %}
 
-{% block js %}
-    <script>
-
-        let myMap;
-
-        ymaps.ready(init);
-
-        function init() {
-            myMap = new ymaps.Map('map', {
-                center: [56.01527253, 92.8969574],
-                zoom: 12
-            }, {
-                searchControlProvider: 'yandex#search'
-            });
-        }
-
-    </script>
-{% endblock %}
-
-{% block css %}
-    <style>
-        #map {
-            height: 1000px;
-        }
-    </style>
-{% endblock %}
 
 {% block content %}
 
+<div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center light-blue-text">Places Remember</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">Here you can store your impressions of the places visited </h5>
+      </div>
+    </div>
+  </div>
 
 
 {% endblock %}
 
-{% block end_js %}
-    {% if user.is_authenticated %}
-        <script>
-            var toastHTML = '<img src="{{ user_avatar }}" alt="" class="circle responsive-img">' +
-                '<span class="white-text" style="margin-left: 10px">Welcome, {{ user_name }}</span>';
-            M.toast({html: toastHTML});
-
-        </script>
-    {% endif %}
-{% endblock %}
