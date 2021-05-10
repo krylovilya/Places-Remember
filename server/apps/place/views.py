@@ -6,6 +6,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from apps.place.forms import PlaceForm
+from apps.place.models import PlaceModel
+import random
 
 
 @method_decorator(login_required, name='dispatch')
@@ -72,3 +74,17 @@ class AddPlaceFormVIew(View):
                 'form': form,
                 'yandex_api': settings.YANDEX_API_KEY,
             })
+
+
+class DeleteAndGenerateTestPlaces(View):
+    def get(self, request):
+        request.user.places.all().delete()
+        for i in range(50):
+            tmp_object = PlaceModel()
+            tmp_object.title = f"Test title {i}"
+            tmp_object.comment = f"Test comment {i}"
+            tmp_object.lat = random.uniform(55.997097, 56.019986)
+            tmp_object.lng = random.uniform(92.771205, 92.965182)
+            tmp_object.author_id = request.user.id
+            tmp_object.save()
+        return HttpResponseRedirect('/place')
