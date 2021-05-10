@@ -1,0 +1,19 @@
+from django.forms import ModelForm, forms
+from apps.place.models import PlaceModel
+
+
+class PlaceForm(ModelForm):
+    class Meta:
+        model = PlaceModel
+        fields = ['title', 'comment', 'lat', 'lng']
+
+    def __init__(self, user, *args, **kwargs):
+        self.author_id = user.id
+        super(PlaceForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        place = super(PlaceForm, self).save(commit=False)
+        place.author_id = self.author_id
+        if commit:
+            place.save()
+        return place

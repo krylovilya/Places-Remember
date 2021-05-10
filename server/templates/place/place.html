@@ -57,7 +57,7 @@
 
     <!-- Add button -->
     <a id="add_btn" class="waves-effect waves-light btn btn-floating blue btn-large"
-       style="position: fixed; bottom: 45px; right: 25px;">
+       href="add_place/" style="position: fixed; bottom: 45px; right: 25px;">
         <i class="material-icons">add</i>
     </a>
 
@@ -112,7 +112,7 @@
 <!-- Init yandex map api -->
 {% block js %}
 
-    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey={{ yandex_api }}"
+    <script src="https://api-maps.yandex.ru/2.1/?lang=en_US&amp;apikey={{ yandex_api }}"
             type="text/javascript"></script>
 
 {% endblock %}
@@ -127,6 +127,12 @@
                 instances.open();
                 let hidden_text = document.getElementById('no_place_text');
                 hidden_text.style.display = 'block';
+            });
+        </script>
+    {% endif %}
+    {% if page_obj.paginator.count <= 1 %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
                 let map_button = document.getElementById('map_btn');
                 map_button.style.display = 'none';
             });

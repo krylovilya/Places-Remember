@@ -1,10 +1,11 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
 from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from apps.place.forms import PlaceForm
 
 
 @method_decorator(login_required, name='dispatch')
@@ -47,3 +48,27 @@ class GetAllPlacesView(View):
             'features': features,
         }
         return JsonResponse(response_dict)
+
+
+class AddPlaceFormVIew(View):
+    def get(self, request):
+        form = PlaceForm(request.user)
+        return render(request, 'place/add_place.html', {
+            'form': form,
+            'yandex_api': settings.YANDEX_API_KEY,
+        })
+
+    def post(self, request):
+        form = PlaceForm(request.user, request.POST)
+        user = request.user
+        if form.is_valid():
+            form.cleaned_data.update({
+                'author_id': user.id,
+            })
+            form.save()
+            return HttpResponseRedirect('/place')
+        else:
+            return render(request, 'place/add_place.html', {
+                'form': form,
+                'yandex_api': settings.YANDEX_API_KEY,
+            })
