@@ -2,19 +2,61 @@
 
 
 {% block content %}
-
-    <div class="row">
-        <div class="col s12 m4">
-            <div class="card-panel light-blue lighten-5">
-        <span class="black-text"><h5>Place one.
-        </h5></span>
-            </div>
-        </div>
-
+    <div class="center" id="no_place_text" style="display: none">
+        <br><br>
+        <h4>You don't have a single place memory</h4>
     </div>
 
+    <!-- Places list -->
+    <div class="row">
+        {% for place in page_obj %}
+
+            <div class="col s12 m6 l4">
+                <a class="modal-trigger" href="#modal{{ place.id }}">
+                    <div class="card-panel light-blue lighten-5 z-depth-1">
+                        <h6><span class="black-text">{{ place.title | truncatechars:35 }}
+                        </span></h6>
+                    </div>
+                </a></div>
+
+            <!-- Modal -->
+
+            <div id="modal{{ place.id }}" class="modal">
+                <div class="modal-content">
+                    <h5>{{ place.title }}</h5>
+                    <p>{{ place.comment }}</p>
+                    <div class="hiddendiv lat" id="lat{{ place.id }}">{{ place.lat }}</div>
+                    <div class="hiddendiv lng" id="lng{{ place.id }}">{{ place.lng }}</div>
+                </div>
+                <br>
+                <div id="map{{ place.id }}" class="map" style="height: 400px; margin: 20px;"></div>
+            </div>
+
+        {% endfor %}
+    </div>
+
+
+    <!-- Map button -->
+    <a id="map_btn" class="waves-effect waves-light btn modal-trigger btn-floating blue btn-large"
+       href="#map_modal" style="position: fixed; bottom: 45px; right: 95px;">
+        <i class="material-icons">map</i>
+    </a>
+
+    <div id="map_modal" class="modal">
+        <div class="modal-content">
+            <h5>All places</h5>
+        </div>
+        <br>
+
+        <div class="progress blue lighten-4">
+            <div class="indeterminate blue"></div>
+        </div>
+        <div id="all_places_map" class="map" style="height: 400px; margin: 20px;"></div>
+    </div>
+
+
     <!-- Add button -->
-    <a id="add_btn" class="waves-effect waves-light btn btn-floating blue"
+    <a id="add_btn" class="waves-effect waves-light btn btn-floating blue btn-large"
        style="position: fixed; bottom: 45px; right: 25px;">
         <i class="material-icons">add</i>
     </a>
@@ -25,22 +67,122 @@
             <h5>Add new place</h5>
         </div>
     </div>
+
+    <!-- Pagination -->
+    {% if page_obj.paginator.num_pages > 1 %}
+        <ul class="pagination center-align">
+            {% if page_obj.has_previous %}
+                <li class="waves-effect"><a href="?page={{ page_obj.previous_page_number }}">
+                    <i class="material-icons">chevron_left</i></a></li>
+            {% else %}
+                <li class="disabled"><a href="#!">
+                    <i class="material-icons">chevron_left</i></a></li>
+            {% endif %}
+
+            {% for num_page in page_obj.paginator.page_range %}
+                {% if num_page == page_obj.number %}
+                    <li class="active blue"><a href="?page={{ num_page }}">{{ num_page }}</a></li>
+                {% else %}
+                    <li class="waves-effect"><a href="?page={{ num_page }}">{{ num_page }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="waves-effect"><a href="?page={{ page_obj.next_page_number }}">
+                    <i class="material-icons">chevron_right</i></a></li>
+            {% else %}
+                <li class="disabled"><a href="#!">
+                    <i class="material-icons">chevron_right</i></a></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+
+
+{% endblock %}
+
+<!-- Hidden my places button -->
+{% block css %}
+    <style>
+        #my_places_btn {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+<!-- Init yandex map api -->
+{% block js %}
+
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey={{ yandex_api }}"
+            type="text/javascript"></script>
+
 {% endblock %}
 
 {% block end_js %}
-    {% if show_welcome_toast %}
+
+    {% if page_obj.paginator.count == 0 %}
         <script>
-            var toastHTML = '<img src="{{ user_avatar }}" alt="" class="circle responsive-img">' +
-                '<span class="white-text" style="margin-left: 10px">Welcome, {{ user_name }}</span>';
-            M.toast({html: toastHTML});
+            document.addEventListener('DOMContentLoaded', function () {
+                let elems = document.querySelectorAll('.tap-target');
+                let instances = M.TapTarget.init(elems[0]);
+                instances.open();
+                let hidden_text = document.getElementById('no_place_text');
+                hidden_text.style.display = 'block';
+                let map_button = document.getElementById('map_btn');
+                map_button.style.display = 'none';
+            });
         </script>
     {% endif %}
     <script>
 
+        function open_map(modal_id) {
+            map_element = modal_id.getElementsByClassName('map')[0].id;
+            if (map_element === "all_places_map") {
+                view_all_places(map_element);
+                return;
+            }
+            let lat = parseFloat(modal_id.getElementsByClassName('lat')[0].textContent);
+            let lng = parseFloat(modal_id.getElementsByClassName('lng')[0].textContent);
+            let map = new ymaps.Map(map_element, {
+                center: [lat, lng],
+                zoom: 15,
+            });
+            let point = new ymaps.GeoObject({
+                geometry: {
+                    type: "Point",
+                    coordinates: [lat, lng]
+                }
+            });
+            map.geoObjects.add(point);
+        }
+
+        function close_map(modal_id) {
+            //TODO: remove map after closing this modal
+        }
+
+        function view_all_places(map_element) {
+            fetch("/place/get_all_places")
+                .then(response => response.json())
+                .then((data) => {
+                    let preloader = document.getElementsByClassName('progress')[0];
+                    preloader.remove();
+                    let points = ymaps.geoQuery(data)
+                    let map = new ymaps.Map(map_element, {
+                        center: [55.76, 37.64],
+                        zoom: 10,
+                    });
+                    map.geoObjects.add(points.clusterize());
+                    map.setBounds(points.getBounds(), {zoomMargin: [30, 30, 30, 30]});
+                    map.setZoom(map.getZoom());
+
+                });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
-            var elems = document.querySelectorAll('.tap-target');
-            var instances = M.TapTarget.init(elems[0]);
-            instances.open();
+            let all_modals = document.querySelectorAll('.modal');
+            let instances = M.Modal.init(all_modals, {
+                onOpenEnd: open_map,
+                onCloseEnd: close_map,
+            });
         });
 
     </script>

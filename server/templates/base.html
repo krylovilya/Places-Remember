@@ -10,6 +10,18 @@
         <link rel="stylesheet" href="{% static "css/materialize.min.css" %}">
         <script src="{% static "js/materialize.min.js" %}"></script>
 
+        <style>
+            .header, .main {
+                padding-left: 300px;
+            }
+
+            @media only screen and (max-width: 992px) {
+                .header, .main {
+                    padding-left: 0;
+                }
+            }
+        </style>
+
         {% block css %}
         {% endblock %}
 
@@ -23,27 +35,54 @@
 
 <body>
 
-<nav style="z-index: 3; margin-bottom: 3px">
-    <div class="nav-wrapper light-blue lighten-3">
-        <a href="/" class="brand-logo right black-text">PlacesRemember</a>
-        <ul id="nav-mobile" class="hide-on-med-and-down">
-            {% if not user.is_authenticated %}
-                <li><a class="black-text" href="/login/vk-oauth2">Login via VK</a></li>
-                <li><a class="black-text" href="/login/facebook">Login via Facebook</a></li>
-            {% else %}
-                <li><a class="black-text" href="/logout">Logout</a></li>
-            {% endif %}
-
-        </ul>
+<!-- Nav bar -->
+<nav class="blue header" style="z-index: 3; margin-bottom: 3px">
+    <div class="nav-wrapper container">
+        <a href="/" class="brand-logo center white-text">PlacesRemember</a>
+        <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
     </div>
 </nav>
 
+<!-- Side nav -->
+<ul class="sidenav sidenav-fixed container" id="nav-mobile">
+    {% if not user.is_authenticated %}
+        <li><a class="black-text" href="/login/vk-oauth2">Login via VK</a></li>
+        <li><a class="black-text" href="/login/facebook">Login via Facebook</a></li>
+    {% else %}
+        <li>
+            <div class="user-view">
+                <div class="background" style="background-color: #1e88e5;">
+                </div>
+                <img class="circle" src="{{ user.user_avatar.avatar.url }}">
+                <span class="white-text name">{{ user.first_name }} {{ user.last_name }}</span>
+                <span class="white-text email">{{ user.email }}</span>
+            </div>
+        </li>
+        <li id="my_places_btn"><a class="black-text" href="/place">My Places</a></li>
+        <li><a class="black-text" href="/logout">Logout</a></li>
+    {% endif %}
+</ul>
 
-<div class="container">
+
+<!-- Content -->
+<div class="container main" style="margin-top: 20px;">
     {% block content %}
     {% endblock %}
 </div>
 
+
+<!-- Activate Side nav -->
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        let elems = document.querySelectorAll('.sidenav');
+        let instances = M.Sidenav.init(elems, {
+            draggable: true,
+            dragTargetWidth: '100%',
+        });
+    });
+
+</script>
 
 {% block end_js %}
 {% endblock %}
