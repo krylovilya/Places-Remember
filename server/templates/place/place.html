@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load tags %}
 {% block title %}My Places{% endblock %}
 
 
@@ -113,7 +114,7 @@
 <!-- Init yandex map api -->
 {% block js %}
 
-    <script src="https://api-maps.yandex.ru/2.1/?lang=en_US&amp;apikey={{ yandex_api }}"
+    <script src="https://api-maps.yandex.ru/2.1/?lang=en_US&amp;apikey={% get_yandex_api_key %}"
             type="text/javascript"></script>
 
 {% endblock %}

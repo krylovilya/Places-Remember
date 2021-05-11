@@ -4,7 +4,6 @@ from django.views import View
 from django.core.paginator import Paginator
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
 from apps.place.forms import PlaceForm
 from apps.place.models import PlaceModel
 import random
@@ -14,10 +13,7 @@ import random
 class PlaceView(View):
     def get(self, request):
         user = request.user
-        content = {
-            'yandex_api': settings.YANDEX_API_KEY,
-        }
-        content.update(get_user_places(request, user))
+        content = get_user_places(request, user)
         return render(request, 'place/place.html', content)
 
 
@@ -57,7 +53,6 @@ class AddPlaceFormVIew(View):
         form = PlaceForm(request.user)
         return render(request, 'place/add_place.html', {
             'form': form,
-            'yandex_api': settings.YANDEX_API_KEY,
         })
 
     def post(self, request):
@@ -72,7 +67,6 @@ class AddPlaceFormVIew(View):
         else:
             return render(request, 'place/add_place.html', {
                 'form': form,
-                'yandex_api': settings.YANDEX_API_KEY,
             })
 
 
