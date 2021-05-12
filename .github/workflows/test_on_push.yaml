@@ -1,0 +1,41 @@
+name: CI
+
+on: [push]
+
+env:
+  GITHUB_TOKEN: ${{ secrets.TOKEN }}
+  secret_KEY: ${{ secrets.SECRET_KEY }}
+  YANDEX_API_KEY: ${{ secrets.YANDEX_API_KEY }}
+  SOCIAL_AUTH_VK_OAUTH2_KEY: ${{ secrets.SOCIAL_AUTH_VK_OAUTH2_KEY }}
+  SOCIAL_AUTH_VK_OAUTH2_SECRET: ${{ secrets.SOCIAL_AUTH_VK_OAUTH2_SECRET }}
+  SOCIAL_AUTH_FACEBOOK_KEY: ${{ secrets.SOCIAL_AUTH_FACEBOOK_KEY }}
+  SOCIAL_AUTH_FACEBOOK_SECRET: ${{ secrets.SOCIAL_AUTH_FACEBOOK_SECRET }}
+
+jobs:
+  test_and_coveralls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo coverage==5.5 >> server/requirements.txt
+      - run: echo coveralls==3.0.1 >> server/requirements.txt
+      - run: bash bin/dev_build
+      - run: bash bin/dev_up
+      - run: bash bin/makemigrations
+      - run: bash bin/migrate
+      - run: docker exec -i $(docker ps | grep server_ | awk '{{ print $1 }}') coverage run manage.py test
+      - run: docker exec -i $(docker ps | grep server_ | awk '{{ print $1 }}') bash -c 'COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_TOKEN }} coveralls'
+      #- run: bash bin/test ${{ secrets.COVERALLS_TOKEN }}
+  deploy:
+    needs: test_and_coveralls
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Push to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          port: ${{ secrets.SERVER_PORT }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+          script: cd Places-Remember/ ; git pull ; bash bin/kill ; bash bin/dev_build && bash bin/dev_up && sleep 5 && bash bin/makemigrations && bash bin/migrate
+          debug: true
