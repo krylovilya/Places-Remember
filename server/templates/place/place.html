@@ -16,7 +16,7 @@
             <div class="col s12 m6 l4">
                 <a class="modal-trigger" href="#modal{{ place.id }}">
                     <div class="card-panel light-blue lighten-5 z-depth-1">
-                        <h6><span class="black-text">{{ place.title | truncatechars:35 }}
+                        <h6><span class="black-text" style="word-break: break-all;">{{ place.title | truncatechars:35 }}
                         </span></h6>
                     </div>
                 </a></div>
@@ -24,7 +24,7 @@
             <!-- Modal -->
 
             <div id="modal{{ place.id }}" class="modal">
-                <div class="modal-content">
+                <div class="modal-content" style="word-break: break-all;">
                     <h5>{{ place.title }}</h5>
                     <p>{{ place.comment }}</p>
                     <div class="hiddendiv lat" id="lat{{ place.id }}">{{ place.lat }}</div>
