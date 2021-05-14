@@ -1,0 +1,41 @@
+version: '3'
+services:
+    nginx:
+        build:
+            context: ./
+            dockerfile: ./nginx/Dockerfile
+        depends_on:
+            - server
+        ports:
+            - 443:443
+        volumes:
+            - ./server/media:/nginx/media
+            - ./server:/server:Z
+            - /var/lib/letsencrypt:/var/lib/letsencrypt
+            - /etc//letsencrypt:/etc//letsencrypt
+    server:
+        build:
+            context: ./
+            dockerfile: ./server/Dockerfile
+            args:
+              - secret_KEY
+              - YANDEX_API_KEY
+              - SOCIAL_AUTH_VK_OAUTH2_KEY
+              - SOCIAL_AUTH_VK_OAUTH2_SECRET
+              - SOCIAL_AUTH_FACEBOOK_KEY
+              - SOCIAL_AUTH_FACEBOOK_SECRET
+        command: gunicorn config.wsgi -c ./config/gunicorn.py
+        volumes:
+            - ./server/media:/server/media
+        depends_on:
+            - db
+        environment:
+            DEBUG: 'False'
+            DATABASE_URL: 'postgres://postgres:@db:5432/postgres'
+            BROKER_URL: 'amqp://user:password@rabbitmq:5672/my_vhost'
+    db:
+        image: postgres:11
+        environment:
+            POSTGRES_DB: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_HOST_AUTH_METHOD: trust
