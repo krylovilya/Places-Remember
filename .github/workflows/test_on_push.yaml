@@ -23,7 +23,7 @@ jobs:
       - run: bash bin/makemigrations
       - run: bash bin/migrate
       - run: docker exec -i $(docker ps | grep server_ | awk '{{ print $1 }}') coverage run manage.py test
-      - run: docker exec -i $(docker ps | grep server_ | awk '{{ print $1 }}') bash -c 'COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_TOKEN }} coveralls'
+      - run: docker exec -i $(docker ps | grep server_ | awk '{{ print $1 }}') bash -c 'CI_BRANCH=master; COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_TOKEN }} coveralls'
 
   deploy:
     needs: test_and_coveralls
