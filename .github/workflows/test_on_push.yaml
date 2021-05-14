@@ -16,14 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: pip install coveralls==3.0.1
       - run: echo coverage==5.5 >> server/requirements.txt
-      - run: echo coveralls==3.0.1 >> server/requirements.txt
       - run: bash bin/dev_build
       - run: bash bin/dev_up
       - run: bash bin/makemigrations
       - run: bash bin/migrate
       - run: docker exec -i $(docker ps | grep server_ | awk '{{ print $1 }}') coverage run manage.py test
-      - run: docker exec -i $(docker ps | grep server_ | awk '{{ print $1 }}') bash -c 'CI_BRANCH=master; COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_TOKEN }} coveralls'
+      - run: bash bin/kill
+      - run: bash -c 'mv server/.coverage .coverage && sudo cp -R server/ /server'
+      - run: bash -c 'COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_TOKEN }} coveralls'
 
   deploy:
     needs: test_and_coveralls
