@@ -40,5 +40,5 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
-          script: cd Places-Remember/ ; git pull ; bash bin/kill ; bash bin/dev_build && bash bin/dev_up && sleep 5 && bash bin/makemigrations && bash bin/migrate
+          script: cd Places-Remember/ ; git pull ; bash bin/kill ; bash bin/prod_build && bash bin/prod_up && sleep 5 && bash bin/makemigrations && bash bin/migrate
           debug: true
