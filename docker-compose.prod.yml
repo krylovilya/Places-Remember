@@ -11,8 +11,7 @@ services:
             - 443:443
         volumes:
             - ./server/media:/nginx/media
-            - ./server/staticfiles:/nginx/static
-            - ./server:/server:Z
+            - ./server:/server:z
             - /var/lib/letsencrypt:/var/lib/letsencrypt
             - /etc//letsencrypt:/etc//letsencrypt
     server:
@@ -28,7 +27,7 @@ services:
               - SOCIAL_AUTH_FACEBOOK_SECRET
         command: gunicorn config.wsgi -c ./config/gunicorn.py
         volumes:
-            - ./server/media:/server/media
+            - ./server:/server:z
         depends_on:
             - db
         environment:

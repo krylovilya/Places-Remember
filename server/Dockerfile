@@ -30,3 +30,4 @@ ARG SOCIAL_AUTH_FACEBOOK_SECRET
 ENV SOCIAL_AUTH_FACEBOOK_SECRET=$SOCIAL_AUTH_FACEBOOK_SECRET
 
 RUN python ./manage.py collectstatic --noinput
+COPY /server/staticfiles ./server/staticfiles
