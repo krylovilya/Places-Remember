@@ -11,6 +11,7 @@ services:
             - 443:443
         volumes:
             - ./server/media:/nginx/media
+            - ./server/staticfiles:/nginx/static
             - ./server:/server:Z
             - /var/lib/letsencrypt:/var/lib/letsencrypt
             - /etc//letsencrypt:/etc//letsencrypt
