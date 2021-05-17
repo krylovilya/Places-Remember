@@ -1,9 +1,9 @@
-from apps.PlacesRemember.models import UserAvatarModel
-from django.core.files.base import ContentFile
-import requests
-from django.core import files
-from io import BytesIO
 import datetime
+from io import BytesIO
+
+import requests
+from apps.PlacesRemember.models import UserAvatarModel
+from django.core import files
 
 
 def get_avatar(backend, strategy, details, response, user=None, *args, **kwargs):
@@ -15,7 +15,6 @@ def get_avatar(backend, strategy, details, response, user=None, *args, **kwargs)
             avatar_url = response.get('photo', '')
         if backend.name == 'facebook':
             avatar_url = 'https://graph.facebook.com/{}/picture?type=small'.format(response['id'])
-            # avatar_url = "https://graph.facebook.com/%s/picture?width=150&height=150" % response['id']
         avatar_response = requests.get(avatar_url)
         avatar_bytes = BytesIO()
         avatar_bytes.write(avatar_response.content)

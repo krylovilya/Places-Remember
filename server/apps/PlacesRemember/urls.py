@@ -1,5 +1,5 @@
-from django.urls import path
 from apps.PlacesRemember.views import IndexView
+from django.urls import path
 
 urlpatterns = [
     path('', IndexView.as_view()),

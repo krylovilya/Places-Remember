@@ -1,12 +1,13 @@
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
-from django.shortcuts import render
-from django.views import View
-from django.core.paginator import Paginator
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
+import random
+
 from apps.place.forms import PlaceForm
 from apps.place.models import PlaceModel
-import random
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views import View
 
 
 @method_decorator(login_required, name='dispatch')

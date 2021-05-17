@@ -1,5 +1,5 @@
-from django.forms import ModelForm, forms
 from apps.place.models import PlaceModel
+from django.forms import ModelForm
 
 
 class PlaceForm(ModelForm):
